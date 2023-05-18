@@ -13,6 +13,8 @@ public:
 	Sphere(){}
 	Sphere(Point3 c, float r, shared_ptr<Material> material) : center(c), radius(r), materialPtr(material) {};
 
+	// Solve a quaratic equation and save the result to hitRecord
+	// Return true if the intersection point is valid, in the range [tMin, tMax], and false otherwise
 	bool hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const {
 		Vec3 oc = ray.origin() - center;
 		Point3 o = ray.origin();

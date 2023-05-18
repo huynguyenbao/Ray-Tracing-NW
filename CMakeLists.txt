@@ -17,7 +17,7 @@ set ( RT1W_CORE_HEADERS
 	src/Material.h
 	src/Sphere.h
 	src/Utils.h
-)
+ )
 
 set ( RT1W_CORE_SOURCE
 	src/Vec3.cpp

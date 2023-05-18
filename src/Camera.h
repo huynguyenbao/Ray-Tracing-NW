@@ -20,7 +20,7 @@ public:
 	) {
 		//  vPoV: Vertical Point of View
 		float theta = degrees2radian(vPoV);
-		float h = tanf(theta / 2);
+		float h = tanf(theta / 2) * focalDistance;
 		
 		// Sensor size
 		float viewPortHeight = 2.0 * h;
@@ -41,11 +41,14 @@ public:
 	}
 
 	Ray getRay(float u, float v) {
+		// Cast a ray from the camera through a pixel point in the image plane.
+
+		// Defocus blur
 		Vec3 noise = lensRadius * randomInUnitDisk();
 		Vec3 offset = noise.x() * xVector + noise.y() * yVector;
 
 		Point3 pixelPoint = u * horizontal + v * vertical + bottomLeftCorner;
-
+			
 		Vec3 direction = (pixelPoint + offset) - origin;
 
 		Ray ray(origin, direction);

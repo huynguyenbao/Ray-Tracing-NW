@@ -17,6 +17,7 @@ class Lambertian : public Material {
 public:
 	Lambertian(Color c) : albedo(c) {}
 	bool scatter(const Ray& ray_in, const HitRecord& hitRecord, Color& attenuation, Ray& scatter) const override {
+
 		Vec3 reflectedVector = hitRecord.normal + Vec3::randomInHemisphere(hitRecord.normal);
 		if (reflectedVector.nearZero()) {
 			reflectedVector = hitRecord.normal;

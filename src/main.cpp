@@ -17,8 +17,6 @@ using namespace std;
 
 Color rayColor(const Ray& ray, const Hittable& world, int maxDepth);
 
-float hitSphere(const Ray& ray, const Point3& center, const float& radius);
-
 void createRandomScene(HittableList& world) {
 	world.clear();
 	
@@ -26,8 +24,8 @@ void createRandomScene(HittableList& world) {
 	world.add(make_shared<Sphere>(Point3(0, -1000, 0), 1000, groundMaterial));
 
 	float sRadius = 0.2;
-	for (int x = -11; x < 11; x++) {
-		for (int z = -11; z < 11; z++) {
+	for (int x = -3; x < 3; x++) {
+		for (int z = -3; z < 3; z++) {
 			auto mat = random_float();
 			
 			Point3 center(x + 0.9 * random_float(), sRadius, z + 0.9 * random_float());
@@ -67,7 +65,7 @@ int main()
 {
 	float aspectRatio = 3.0 / 2.0;
 	
-	Point3 lookFrom(13, 2, 3);
+	Point3 lookFrom(9, 2, 11);
 	Point3 lookAt(0, 0, 0);
 	Vec3 upVector(0, 1, 0);
 	float focalDistance = 10.0;
@@ -76,9 +74,9 @@ int main()
 	Camera camera(lookFrom, lookAt, upVector, 20, aspectRatio, focalDistance, aperture);
 	
 	// Image Size
-	const int imageWidth = 400;
+	const int imageWidth = 1200;
 	const int imageHeight = (int) (imageWidth / aspectRatio);
-	const int samplesPerPixel = 100;
+	const int samplesPerPixel = 500;
 	const int maxDepth = 50;
 
 	// World space
@@ -113,33 +111,11 @@ int main()
 	return 0;
 }
 
-//float hitSphere(const Ray& ray, const Point3& center, const float& radius) {
-//	Vec3 oc = ray.origin() - center;
-//	Point3 o = ray.origin();
-//	Vec3 d = ray.direction();
-//
-//	float A = d.length2();
-//	float halfB = dot(oc, d);
-//	float C = oc.length2() - radius * radius;
-//
-//	float delta = halfB * halfB - A * C;
-//	if (delta < 0)
-//		return -1;
-//	else {
-//		float t0 = (-halfB - sqrtf(delta)) / A;
-//		float t1 = (-halfB + sqrtf(delta)) / A;
-//		if (t0 > t1) return t1;
-//		return t0;
-//	}
-//}
-
 Color rayColor(const Ray& ray, const Hittable& world, int depth) {
 	if (depth <= 0) return Color(0, 0, 0);
 
 	HitRecord hitRecord;
 	if(world.hit(ray, 0.001, INF, hitRecord)) {
-		//Vec3 reflectedVector = hitRecord.normal + Vec3::randomInUnitSphere();
-		//Vec3 reflectedVector = hitRecord.normal + Vec3::randomUnitVector();
 		Ray reflectedRay;
 		Color attenuation;
 		if (hitRecord.materialPtr->scatter(ray, hitRecord, attenuation, reflectedRay)) {
@@ -148,8 +124,7 @@ Color rayColor(const Ray& ray, const Hittable& world, int depth) {
 		return Color(0, 0, 0);
 	}
 	
-	//return Color(1, 1, 1);
 	Vec3 u = unitVector(ray.direction());
 	float t = 0.5 * (u.y() + 1);
-	return (1 - t) * Color(1, 1, 1) + t * Color(0.0, 0.7, 1.0);
+	return (1 - t) * Color(1, 1, 1) + t * Color(0.5, 0.7, 1.0);
 }
