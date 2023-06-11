@@ -3,7 +3,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
-#include "RT1W.h"
+#include "RTNW.h"
 
 #include <cmath>
 #include <iostream>
@@ -41,11 +41,11 @@ public:
 	float z() const { return e[2]; }
 
 	Vec3 operator -() { return Vec3(-e[0], -e[1], e[2]); }
-	
-	//float operator [] (int i) { 
-	//	assert(i > -1 && i < 3);
-	//	return e[i]; 
-	//}
+
+	float operator [] (int i) const { 
+		assert(i > -1 && i < 3);
+		return e[i]; 
+	}
 	
 	float& operator [] (int i) { 
 		assert(i > -1 && i < 3); 

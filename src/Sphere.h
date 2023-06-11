@@ -3,7 +3,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "RT1W.h"
+#include "RTNW.h"
 #include "Vec3.h"
 #include "Hittable.h"
 #include "Ray.h"
@@ -41,8 +41,31 @@ public:
 			hitRecord.t = t;
 			setNormal(hitRecord, ray, outwardNormal);
 			hitRecord.materialPtr = materialPtr;
+			getSphereUV(outwardNormal, hitRecord.u, hitRecord.v);
 			return true;
 		}
+	}
+
+	bool boundingBox(float time0, float time1, AABB& bbox) const {
+		bbox = AABB(
+			center - Vec3(radius, radius, radius),
+			center + Vec3(radius, radius, radius));
+
+		return true;
+	}
+
+	static void getSphereUV(const Point3& p, float& u, float& v) {
+		// p: a given point on the sphere of radius one, centered at the origin.
+		// u: returned value [0,1] of angle around the Y axis from X=-1.
+		// v: returned value [0,1] of angle from Y=-1 to Y=+1.
+		//     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+		//     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+		//     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+		float theta = acosf(-p.y());
+		float phi = atan2f(-p.z(), p.x()) + PI;
+
+		u = phi / (2 * PI);
+		v = theta / PI;
 	}
 public:
 	Point3 center;

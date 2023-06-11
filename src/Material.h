@@ -3,32 +3,40 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "RT1W.h"
+#include "RTNW.h"
 #include "Ray.h"
 #include "Hittable.h"
 #include "Color.h"
+#include "Texture.h"
 
 class Material {
 public:
 	virtual bool scatter(const Ray& ray_in, const HitRecord& hitRecord, Color& attenuation, Ray& scatteredRay) const = 0;
+	
+	virtual Color emitted(float u, float v, const Point3& p) const {
+		return Color(0, 0, 0);
+	}
 };
 
 class Lambertian : public Material {
 public:
-	Lambertian(Color c) : albedo(c) {}
+	Lambertian(Color c) : albedo(make_shared<SolidColor>(c)) {}
+	Lambertian(shared_ptr<Texture> texure) : albedo(texure) {}
+
 	bool scatter(const Ray& ray_in, const HitRecord& hitRecord, Color& attenuation, Ray& scatter) const override {
 
-		Vec3 reflectedVector = hitRecord.normal + Vec3::randomInHemisphere(hitRecord.normal);
+		Vec3 reflectedVector = Vec3::randomInHemisphere(hitRecord.normal);
+		//Vec3 reflectedVector = hitRecord.normal + randomUnitVector();
 		if (reflectedVector.nearZero()) {
 			reflectedVector = hitRecord.normal;
 		}
-		scatter = Ray(hitRecord.p, reflectedVector);
-		attenuation = albedo;
+		scatter = Ray(hitRecord.p, reflectedVector, ray_in.time());
+		attenuation = albedo->value(hitRecord.u, hitRecord.v, hitRecord.p);
 		
 		return true;
 	}
 public:
-	Color albedo;
+	shared_ptr<Texture> albedo;
 };
 
 class Metal : public Material {
@@ -39,7 +47,7 @@ public:
 
 		if (dot(reflectedVector, hitRecord.normal) < 0) return false;
 
-		scatter = Ray(hitRecord.p, reflectedVector);
+		scatter = Ray(hitRecord.p, reflectedVector, ray_in.time());
 		attenuation = albedo;
 
 		return true;
@@ -77,7 +85,7 @@ public:
 			// Must Refract
 			refractedVector = refract(ray_in.direction(), hitRecord.normal, n1, n2);
 		}
-		scatter = Ray(hitRecord.p, refractedVector);
+		scatter = Ray(hitRecord.p, refractedVector, ray_in.time());
 		attenuation = Color(1, 1, 1);
 
 		return true;
@@ -91,6 +99,36 @@ private:
 		float r0 = powf((n1 - n2) / (n1 + n2), 2);
 		return r0 + (1 - r0) * (1 - powf(cosTheta, 5));
 	}
+};
+
+class DiffuseLight : public Material {
+public:
+	DiffuseLight(shared_ptr<Texture> texture) : emit(texture){}
+	DiffuseLight(Color c) : emit(make_shared<SolidColor>(c)) {}
+
+	virtual bool scatter(const Ray& ray_in, const HitRecord& hitRecord, Color& attenuation, Ray& scatteredRay) const override {
+		return false;
+	}
+
+	virtual Color emitted(float u, float v, const Point3& p) const override {
+		return emit->value(u, v, p);
+	}
+private:
+	shared_ptr<Texture> emit;
+};
+
+class Isotropic : public Material {
+public:
+	Isotropic(Color a) : abedo(make_shared<SolidColor>(a)) {}
+	Isotropic(shared_ptr<Texture> a) : abedo(a) {}
+
+	virtual bool scatter(const Ray& ray_in, const HitRecord& hitRecord, Color& attenuation, Ray& scatteredRay) const override {
+		scatteredRay = Ray(hitRecord.p, randomUnitVector(), ray_in.time());
+		attenuation = abedo->value(hitRecord.u, hitRecord.v, hitRecord.p);
+		return true;
+	}
+private:
+	shared_ptr<Texture> abedo;
 };
 
 #endif // !MATERIAL_H

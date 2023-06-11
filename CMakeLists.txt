@@ -1,13 +1,13 @@
-﻿# CMakeList.txt : CMake project for RT1W, include source and define
+﻿# CMakeList.txt : CMake project for RTNW, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
 
-SET(PROJECTNAME RT1W)
+SET(PROJECTNAME RTNW)
 PROJECT(${PROJECTNAME})
 
-set ( RT1W_CORE_HEADERS
-	src/RT1W.h
+set ( RTNW_CORE_HEADERS
+	src/RTNW.h
 	src/Vec3.h
 	src/Ray.h
 	src/Camera.h
@@ -17,35 +17,31 @@ set ( RT1W_CORE_HEADERS
 	src/Material.h
 	src/Sphere.h
 	src/Utils.h
- )
+	src/MovingSphere.h		
+	src/AABB.h			
+	src/BVHNode.h		
+	src/Texture.h			
+	src/Perlin.h
+	src/rtnw_stb_image.h
+  "src/AARect.h" "src/Box.h" "src/ConstantMedium.h")
 
-set ( RT1W_CORE_SOURCE
+set ( RTNW_CORE_SOURCE
 	src/Vec3.cpp
-	src/Ray.cpp
-	src/Camera.cpp
-	src/Color.cpp
-	src/Hittable.cpp
-	src/HittableList.cpp
-	src/Material.cpp
-	src/Sphere.cpp
 )
 
 include_directories ( src )
+#include_directories (external)
 
-add_library ( rt1w_lib STATIC
-	${RT1W_CORE_SOURCE}
-	${RT1W_CORE_HEADERS}
+add_library ( rtnw_lib STATIC
+	${RTNW_CORE_HEADERS}
+	${RTNW_CORE_SOURCE}
 )
 
-set_target_properties(rt1w_lib PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(rtnw_lib PROPERTIES LINKER_LANGUAGE CXX)
 
 
 add_executable (${PROJECTNAME} "src/main.cpp" )
 set_target_properties(${PROJECTNAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries ( ${PROJECTNAME} rt1w_lib)
+target_link_libraries ( ${PROJECTNAME} rtnw_lib)
 
-
-# Add source to this project's executable.
-# add_executable (RT1W "main.cpp"  "Vec3.h" "Color.h"  "Ray.h" "Hittable.h" "Sphere.h" "HittableList.h" "RT1W.h" "Camera.h" "Utils.h" "Material.h")
-
-# TODO: Add tests and install targets if needed.
+ 

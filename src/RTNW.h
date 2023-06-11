@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef RT1W_H
-#define RT1W_H
+#ifndef RTNW_H
+#define RTNW_H
 
 #include <cmath>
 #include <memory>
@@ -21,4 +21,4 @@ class HittableList;
 class Camera;
 class Material;
 
-#endif // !RT1W_H
+#endif // !RTNW_H

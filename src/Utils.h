@@ -22,7 +22,12 @@ inline float random_float() {
 
 inline float random_float(float min, float max) {
     // Returns a random real in [0,1).
-    return min * random_float() * (max - min);
+    return min + random_float() * (max - min);
+}
+
+inline int random_int(int min, int max) {
+    // Returns a random int in [min, max]
+    return int(random_float(min, max + 1));
 }
 
 #endif // !UTILS_H

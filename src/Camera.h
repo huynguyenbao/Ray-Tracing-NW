@@ -3,7 +3,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "RT1W.h"
+#include "RTNW.h"
 #include "Ray.h"
 
 class Camera {
@@ -16,7 +16,9 @@ public:
 		float vPoV, 
 		float aspectRatio,
 		float focalDistance,
-		float aperture
+		float aperture,
+		float _time0,
+		float _time1
 	) {
 		//  vPoV: Vertical Point of View
 		float theta = degrees2radian(vPoV);
@@ -38,6 +40,9 @@ public:
 		bottomLeftCorner = origin - vertical / 2 - horizontal / 2 - focalDistance * zVector;
 
 		lensRadius = aperture / 2;
+
+		time0 = _time0;
+		time1 = _time1;
 	}
 
 	Ray getRay(float u, float v) {
@@ -48,10 +53,10 @@ public:
 		Vec3 offset = noise.x() * xVector + noise.y() * yVector;
 
 		Point3 pixelPoint = u * horizontal + v * vertical + bottomLeftCorner;
-			
 		Vec3 direction = (pixelPoint + offset) - origin;
+		float shootingTime = random_float(time0, time1);
 
-		Ray ray(origin, direction);
+		Ray ray(origin, direction, shootingTime);
 
 		return ray;
 	}
@@ -69,6 +74,8 @@ private:
 	Vec3 horizontal;
 	Point3 bottomLeftCorner;
 
+	// Shutter open/ close time
+	float time0, time1;
 };
 
 #endif // !CAMERA_H
