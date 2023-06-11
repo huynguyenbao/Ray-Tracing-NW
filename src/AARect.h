@@ -25,6 +25,7 @@ bool XYRect::boundingBox(float time0, float time1, AABB& bbox) const {
 }
 
 bool XYRect::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const {
+	if (ray.direction().z() == 0) return false;
 	float t = (k - ray.origin().z()) / ray.direction().z();
 	if (t < tMin || t > tMax)
 		return false;
@@ -69,6 +70,7 @@ bool YZRect::boundingBox(float time0, float time1, AABB& bbox) const {
 }
 
 bool YZRect::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const {
+	if (ray.direction().x() == 0) return false;
 	float t = (k - ray.origin().x()) / ray.direction().x();
 	if (t < tMin || t > tMax)
 		return false;
@@ -113,6 +115,7 @@ bool XZRect::boundingBox(float time0, float time1, AABB& bbox) const {
 }
 
 bool XZRect::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const {
+	if (ray.direction().y() == 0) return false;
 	float t = (k - ray.origin().y()) / ray.direction().y();
 	if (t < tMin || t > tMax)
 		return false;

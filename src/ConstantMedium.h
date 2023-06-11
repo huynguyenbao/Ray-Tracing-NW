@@ -54,9 +54,15 @@ bool ConstantMedium::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitR
 	const auto distanceInsideBoundary = (rec2.t - rec1.t) * rayLength;
 	const auto hitDistance = negInvDensity * log(random_float());
 
-	if (hitDistance > distanceInsideBoundary)
+	if (hitDistance > distanceInsideBoundary) {
 		return false;
+		//Ray secondRay = Ray(ray.at(rec2.t + 0.0001), ray.direction(), ray.time());
 
+		//if(!hit(secondRay, tMin, tMax, hitRecord))
+		//	return false;
+
+		//return true;
+	}
 	hitRecord.t = rec1.t + hitDistance / rayLength;
 	hitRecord.p = ray.at(hitRecord.t);
 

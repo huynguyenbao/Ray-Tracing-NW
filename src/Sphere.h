@@ -41,6 +41,7 @@ public:
 			hitRecord.t = t;
 			setNormal(hitRecord, ray, outwardNormal);
 			hitRecord.materialPtr = materialPtr;
+
 			getSphereUV(outwardNormal, hitRecord.u, hitRecord.v);
 			return true;
 		}

@@ -32,7 +32,7 @@ public:
 		}
 		scatter = Ray(hitRecord.p, reflectedVector, ray_in.time());
 		attenuation = albedo->value(hitRecord.u, hitRecord.v, hitRecord.p);
-		
+
 		return true;
 	}
 public:
@@ -122,7 +122,10 @@ public:
 	Isotropic(Color a) : abedo(make_shared<SolidColor>(a)) {}
 	Isotropic(shared_ptr<Texture> a) : abedo(a) {}
 
-	virtual bool scatter(const Ray& ray_in, const HitRecord& hitRecord, Color& attenuation, Ray& scatteredRay) const override {
+	virtual bool scatter(
+		const Ray& ray_in, const HitRecord& hitRecord, 
+		Color& attenuation, Ray& scatteredRay) const override 
+	{
 		scatteredRay = Ray(hitRecord.p, randomUnitVector(), ray_in.time());
 		attenuation = abedo->value(hitRecord.u, hitRecord.v, hitRecord.p);
 		return true;

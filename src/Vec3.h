@@ -34,6 +34,10 @@ public:
 	
 	inline static Vec3 randomInHemisphere(const Vec3& normal);
 
+	inline static bool isNan(const Vec3& v) {
+		return isnan(v[0]) || isnan(v[1]) || isnan(v[2]);
+	}
+
 	Vec3(float e0, float e1, float e2) : e{e0, e1, e2} {}
 	
 	float x() const { return e[0]; }

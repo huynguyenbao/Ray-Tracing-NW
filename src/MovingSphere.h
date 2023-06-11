@@ -39,6 +39,7 @@ public:
 			hitRecord.t = t;
 			setNormal(hitRecord, ray, outwardNormal);
 			hitRecord.materialPtr = materialPtr;
+
 			return true;
 		}
 	}

@@ -15,7 +15,7 @@
 #include <fstream>
 #include "Box.h"
 #include "ConstantMedium.h"
-
+#include "BVHNode.h"
 
 using namespace std;
 
@@ -120,7 +120,7 @@ void cornellBox(HittableList& world) {
 	world.add(box2);
 }
 
-void cornell_smoke(HittableList& world) {
+void cornellSmoke(HittableList& world) {
 
 	auto red = make_shared<Lambertian>(Color(.65, .05, .05));
 	auto white = make_shared<Lambertian>(Color(.73, .73, .73));
@@ -146,7 +146,57 @@ void cornell_smoke(HittableList& world) {
 	world.add(make_shared<ConstantMedium>(box2, 0.01, Color(1, 1, 1)));
 }
 
+void finalScene(HittableList& world) {
+	world.clear();
 
+	auto red = make_shared<Lambertian>(Color(.65, .05, .05));
+	auto white = make_shared<Lambertian>(Color(.73, .73, .73));
+	auto green = make_shared<Lambertian>(Color(.12, .45, .15));
+	auto light = make_shared<DiffuseLight>(Color(15, 15, 15));
+
+	world.add(make_shared<YZRect>(0, 555, 0, 555, 555, green));
+	world.add(make_shared<YZRect>(0, 555, 0, 555, 0, red));
+	world.add(make_shared<XZRect>(213, 343, 227, 332, 554, light));
+	world.add(make_shared<XZRect>(0, 555, 0, 555, 0, white));
+	world.add(make_shared<XZRect>(0, 555, 0, 555, 555, white));
+	world.add(make_shared<XYRect>(0, 555, 0, 555, 555, white));
+
+	auto center1 = Point3(80, 50, 70);
+	auto center2 = center1 + Vec3(0, 30, 0);
+	auto moving_sphere_material = make_shared<Lambertian>(Color(0.7, 0.3, 0.1));
+	world.add(make_shared<MovingSphere>(center1, center2, 0, 1, 50, moving_sphere_material));
+
+	world.add(make_shared<Sphere>(Point3(400, 50, 90), 50, make_shared<Dielectric>(1.5)));
+
+	world.add(make_shared<Sphere>(
+		Point3(200, 50, 200), 50, make_shared<Metal>(Color(0.8, 0.8, 0.9), 1.0)
+		));
+
+	auto boundary = make_shared<Sphere>(Point3(250, 50, 70), 50, make_shared<Dielectric>(1.5));
+	world.add(boundary);
+	world.add(make_shared<ConstantMedium>(boundary, 0.2, Color(0.2, 0.4, 0.9)));
+
+	auto emat = make_shared<Lambertian>(make_shared<ImageTexture>("E:\\Personal\\Blog\\RTNW\\img\\earthmap.jpg"));
+	world.add(make_shared<Sphere>(Point3(400, 100, 400), 100, emat));
+
+	auto pertext = make_shared<NoiseTexture>(0.1);
+	world.add(make_shared<Sphere>(Point3(150, 80, 350), 80, make_shared<Lambertian>(pertext)));
+
+	//HittableList boxes2;
+	//auto white = make_shared<Lambertian>(Color(.73, .73, .73));
+	//int ns = 1000;
+	//for (int j = 0; j < ns; j++) {
+	//	boxes2.add(make_shared<Sphere>(Point3::random(0, 165), 10, white));
+	//}
+
+	//world.add(make_shared<Translate>(
+	//	make_shared<RotateY>(
+	//		make_shared<BVHNode>(boxes2, 0.0, 1.0), 15),
+	//	Vec3(-100, 270, 395)
+	//	)
+	//);
+
+}
 
 int main()
 {	
@@ -202,7 +252,7 @@ int main()
 		lookAt = Point3(0, 2, 0);
 		vFOV = 20.0;
 		break;
-	case 6:
+	case 5:
 		cornellBox(world);
 		aspectRatio = 1.0;
 		imageWidth = 400;
@@ -212,13 +262,21 @@ int main()
 		lookAt = Point3(278, 278, 0);
 		vFOV = 40.0;
 		break;
-
-	default:
-	case 7:
-		cornell_smoke(world);
+	case 6:
+		cornellSmoke(world);
 		aspectRatio = 1.0;
-		imageWidth = 600;
-		samplesPerPixel = 200;
+		imageWidth = 200;
+		samplesPerPixel = 100;
+		lookFrom = Point3(278, 278, -800);
+		lookAt = Point3(278, 278, 0);
+		vFOV = 40.0;
+		break;
+	default:
+	case 8:
+		finalScene(world);
+		aspectRatio = 1.0;
+		imageWidth = 200;
+		samplesPerPixel = 100;
 		lookFrom = Point3(278, 278, -800);
 		lookAt = Point3(278, 278, 0);
 		vFOV = 40.0;
@@ -231,7 +289,7 @@ int main()
 	ofstream imageFile("image.ppm");
 	
 	imageFile << "P3\n" << imageWidth << " " << imageHeight << "\n" << "255\n" << endl;
-
+	int kkk = 0;
 	for (int h = 0; h < imageHeight; h++) {
 		cout << "\rScanlines remaining: " << imageHeight - h << " " << flush;
 		for (int w = 0; w < imageWidth; w++) {
@@ -242,7 +300,6 @@ int main()
 				float u = (w +random_float()) / (imageWidth - 1.0);
 
 				Ray ray = camera.getRay(u, v);
-
 				pixelColor += rayColor(ray, backgroundColor, world, maxDepth);	
 			}
 		
@@ -257,6 +314,9 @@ int main()
 
 Color rayColor(const Ray& ray, const Color& backgroundColor, const Hittable& world, int depth) {
 	if (depth <= 0) return Color(0, 0, 0);
+	
+	if (Vec3::isNan(ray.direction()) || Point3::isNan(ray.origin()))
+		return Color(0, 0, 0);
 
 	HitRecord hitRecord;
 	if (!world.hit(ray, 0.001, INF, hitRecord))
