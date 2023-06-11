@@ -44,6 +44,8 @@ bool XYRect::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) c
 	setNormal(hitRecord, ray, outwardNormal);
 	hitRecord.p = ray.at(t);
 
+	if (Vec3::isNan(hitRecord.p)) 
+		cout << "XYRect" << endl;
 	return true;
 }
 
@@ -88,7 +90,8 @@ bool YZRect::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) c
 	Vec3 outwardNormal = Vec3(1, 0, 0);
 	setNormal(hitRecord, ray, outwardNormal);
 	hitRecord.p = ray.at(t);
-
+	if (Vec3::isNan(hitRecord.p))
+		cout << "YZRect" << endl;
 	return true;
 }
 
@@ -133,7 +136,8 @@ bool XZRect::hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) c
 	Vec3 outwardNormal = Vec3(0, 1, 0);
 	setNormal(hitRecord, ray, outwardNormal);
 	hitRecord.p = ray.at(t);
-
+	if (Vec3::isNan(hitRecord.p))
+		cout << "XZRect" << endl;
 	return true;
 }
 

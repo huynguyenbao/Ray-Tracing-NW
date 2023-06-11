@@ -43,6 +43,9 @@ public:
 			hitRecord.materialPtr = materialPtr;
 
 			getSphereUV(outwardNormal, hitRecord.u, hitRecord.v);
+
+			if (Vec3::isNan(hitRecord.p))
+				cout << "Sphere" << endl;
 			return true;
 		}
 	}

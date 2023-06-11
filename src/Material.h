@@ -30,9 +30,12 @@ public:
 		if (reflectedVector.nearZero()) {
 			reflectedVector = hitRecord.normal;
 		}
+
+		reflectedVector = unitVector(reflectedVector);
 		scatter = Ray(hitRecord.p, reflectedVector, ray_in.time());
 		attenuation = albedo->value(hitRecord.u, hitRecord.v, hitRecord.p);
-
+		//if (Vec3::isNan(reflectedVector))
+		//	cout << "Lambertian" << endl;
 		return true;
 	}
 public:
@@ -47,9 +50,11 @@ public:
 
 		if (dot(reflectedVector, hitRecord.normal) < 0) return false;
 
+		reflectedVector = unitVector(reflectedVector);
 		scatter = Ray(hitRecord.p, reflectedVector, ray_in.time());
 		attenuation = albedo;
-
+		//if (Vec3::isNan(reflectedVector))
+		//	cout << "Metal" << endl;
 		return true;
 	}
 public:
@@ -85,9 +90,11 @@ public:
 			// Must Refract
 			refractedVector = refract(ray_in.direction(), hitRecord.normal, n1, n2);
 		}
+		refractedVector = unitVector(refractedVector);
 		scatter = Ray(hitRecord.p, refractedVector, ray_in.time());
 		attenuation = Color(1, 1, 1);
-
+		//if (Vec3::isNan(refractedVector))
+		//	cout << "Dielectric" << endl;
 		return true;
 	}
 public:
@@ -128,6 +135,8 @@ public:
 	{
 		scatteredRay = Ray(hitRecord.p, randomUnitVector(), ray_in.time());
 		attenuation = abedo->value(hitRecord.u, hitRecord.v, hitRecord.p);
+		//if (Vec3::isNan(scatteredRay.direction()))
+		//	cout << "Isotropic" << endl;
 		return true;
 	}
 private:

@@ -315,8 +315,8 @@ int main()
 Color rayColor(const Ray& ray, const Color& backgroundColor, const Hittable& world, int depth) {
 	if (depth <= 0) return Color(0, 0, 0);
 	
-	if (Vec3::isNan(ray.direction()) || Point3::isNan(ray.origin()))
-		return Color(0, 0, 0);
+	//if (Vec3::isNan(ray.direction()) || Point3::isNan(ray.origin()))
+	//	return Color(0, 0, 0);
 
 	HitRecord hitRecord;
 	if (!world.hit(ray, 0.001, INF, hitRecord))
