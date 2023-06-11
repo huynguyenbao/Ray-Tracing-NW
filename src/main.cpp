@@ -169,7 +169,7 @@ void finalScene(HittableList& world) {
 	world.add(make_shared<Sphere>(Point3(400, 50, 90), 50, make_shared<Dielectric>(1.5)));
 
 	world.add(make_shared<Sphere>(
-		Point3(200, 50, 200), 50, make_shared<Metal>(Color(0.8, 0.8, 0.9), 1.0)
+		Point3(300, 50, 210), 70, make_shared<Metal>(Color(0.8, 0.8, 0.9), 1.0)
 		));
 
 	auto boundary = make_shared<Sphere>(Point3(250, 50, 70), 50, make_shared<Dielectric>(1.5));
